@@ -90,7 +90,8 @@ class MetlinkSensor(Entity):
                 service_id=service.get('Service').get('Code'),
                 service_name=service.get('Service').get('Name')
             )
-            service_time = datetime.strptime(service.get('AimedDeparture'), "%Y-%m-%dT%H:%M:%S+12:00")
+            service_time = datetime.strptime(service.get(
+                'AimedDeparture'), "%Y-%m-%dT%H:%M:%S+12:00")
             attributes[service_time.strftime('%H:%M %a')] = service_label
         return attributes
 
@@ -106,43 +107,3 @@ class MetlinkSensor(Entity):
         r = requests.get(url)
         self._data = r.json()
         self._stop_info = self._data.get('Stop')
-        # self._name = self._stop_info.get('Name')
-
-
-# class PublicTransportData(object):
-#     """The Class for handling the data retrieval."""
-
-#     def __init__(self, journey):
-#         """Initialize the data object."""
-#         self.start = journey[0]
-#         self.destination = journey[1]
-#         self.times = {}
-
-#     @Throttle(MIN_TIME_BETWEEN_UPDATES)
-#     def update(self):
-#         # """Get the latest data from opendata.ch."""
-#         # response = requests.get(
-#         #     _RESOURCE +
-#         #     'connections?' +
-#         #     'from=' + self.start + '&' +
-#         #     'to=' + self.destination + '&' +
-#         #     'fields[]=connections/from/departureTimestamp/&' +
-#         #     'fields[]=connections/',
-#         #     timeout=10)
-#         # connections = response.json()['connections'][:2]
-
-#         # try:
-#         #     self.times = [
-#         #         dt_util.as_local(
-#         #             dt_util.utc_from_timestamp(
-#         #                 item['from']['departureTimestamp'])).strftime(
-#         #                     TIME_STR_FORMAT)
-#         #         for item in connections
-#         #     ]
-#         #     self.times.append(
-#         #         dt_util.as_local(
-#         #             dt_util.utc_from_timestamp(
-#         #                 connections[0]['from']['departureTimestamp'])) -
-#         #         dt_util.as_local(dt_util.utcnow()))
-#         # except KeyError:
-#         #     self.times = ['n/a']
