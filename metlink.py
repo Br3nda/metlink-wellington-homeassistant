@@ -74,7 +74,7 @@ class MetlinkSensor(Entity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return "Route {}".format(self.route_number)
+        return "stop_{}_route_{}".format(self.stop_number, self.route_number)
 
     @property
     def state(self):
