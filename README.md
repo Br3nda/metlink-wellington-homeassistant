@@ -3,19 +3,21 @@
 ![RTI](img/rti.png)
 ![Item info screenshot](img/info.png)
 
-### Example config:
+### Example config
+
+This is Willis street Grand Arcade. Find your stop number at the stop itself, or on https://www.metlink.org.nz/
+
 ```
 sensor:
   - platform: metlink
-    stop_number: 1000
-    route_number: 1
+    stop_number: 5008
+    route_number: 11
   - platform: metlink
-    stop_number: 1000
-    route_number: 10
+    stop_number: 5008
+    route_number: 43
   - platform: metlink
-    stop_number: 1000
-    route_number: 32
-
+    stop_number: 5008
+    route_number: 91
 ```
 
 ## Credit
