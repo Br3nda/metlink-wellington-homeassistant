@@ -74,7 +74,7 @@ class MetlinkSensor(Entity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return "stop_{}_route_{}".format(self.stop_number, self.route_number)
+        return "Route {}".format(self.route_number)
 
     @property
     def state(self):
@@ -91,9 +91,18 @@ class MetlinkSensor(Entity):
     @property
     def device_state_attributes(self):
         """Return the state attributes."""
+        attributes = {
+            'Stop': self.stop_number,
+            'Route': self.route_number,
+            'StopName': self.metlink_stop.stop_name,
+            'Latitude': self.metlink_stop.latitude,
+            'Longitude': self.metlink_stop.longitude
+            }
+
         if self.next_service:
-            return self.next_service.attributes()
-        return {}
+            attributes.update(self.next_service.attributes())
+
+        return attributes
 
     @property
     def next_service(self):
@@ -135,6 +144,14 @@ class MetlinkStop(object):
     @property
     def stop_name(self):
         return self._data.get('Stop', {}).get('Name')
+
+    @property
+    def longitude(self):
+        return self._data.get('Stop', {}).get('Long')
+
+    @property
+    def latitude(self):
+        return self._data.get('Stop', {}).get('Lat')
 
     def next_service(self, route_number=None):
         """The next service expected to arrive here, optionally filtered by route_number """
