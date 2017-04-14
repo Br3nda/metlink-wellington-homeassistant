@@ -82,15 +82,18 @@ class MetlinkSensor(Entity):
         # return self.metlink_stop.services[0].departure_status
         service = self.metlink_stop.next_service(
             route_number=self.route_number)
-        if service.is_real_time:
+        if service and service.is_real_time:
             return int(service.departure_seconds / 60)
-        else:
-            return service.DisplayDeparture
+        elif service and service.display_departure:
+            return pretty_timestamp(service.display_departure)
+
 
     @property
     def device_state_attributes(self):
         """Return the state attributes."""
-        return self.next_service.attributes()
+        if self.next_service:
+            return self.next_service.attributes()
+        return {}
 
     @property
     def next_service(self):
@@ -104,7 +107,7 @@ class MetlinkSensor(Entity):
     @property
     def unit_of_measurement(self):
         """Return the unit this state is expressed in."""
-        if self.next_service.is_real_time:
+        if self.next_service and self.next_service.is_real_time:
             return "min"
         else:
             return "offline"
@@ -173,10 +176,18 @@ class MetlinkService(object):
     def departure_seconds(self):
         return self._get('DisplayDepartureSeconds')
 
+    @property
+    def expected_departure(self):
+        value = self._get('ExpectedDeparture', False)
+        if value:
+            return pretty_timestamp(value)
+        return value
+
+
     def attributes(self):
         return {
             'Operator': self._get('OperatorRef'),
-            'ExpectedDeparture': pretty_timestamp(self._get('ExpectedDeparture')),
+            'ExpectedDeparture': self.expected_departure,
             'DepartureStatus': self._get('DepartureStatus'),
             'IsRealtime': self._get('IsRealtime'),
             'OriginStopName': self._get('OriginStopName'),
@@ -185,8 +196,8 @@ class MetlinkService(object):
             'ServiceID': self._get('ServiceID')
         }
 
-    def _get(self, key):
-        return self._service_data.get(key)
+    def _get(self, key, value=None):
+        return self._service_data.get(key, value)
 
     def __str__(self):
         return str(self._service_data)
