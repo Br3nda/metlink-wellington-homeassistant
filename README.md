@@ -1,6 +1,9 @@
 ## Show the RTI (real time info) expected arrival time of the next bus
 
-Example config:
+![RTI](img/rti.png)
+![Item info screenshot](img/info.png)
+
+### Example config:
 ```
 sensor:
   - platform: metlink
