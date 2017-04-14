@@ -14,3 +14,7 @@ sensor:
     route_number: 32
 
 ```
+
+## Credit
+
+Based on the research of @reedwade https://github.com/reedwade/metlink-api-maybe
