@@ -1,8 +1,8 @@
-"""
-Support for transport.opendata.ch.
-For more details about this platform, please refer to the documentation at
-https://home-assistant.io/components/sensor.swiss_public_transport/
-"""
+
+
+
+
+
 import logging
 from datetime import timedelta, datetime
 
