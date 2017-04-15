@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Br3nda/metlink-wellington-homeassistant.svg?branch=master)](https://travis-ci.org/Br3nda/metlink-wellington-homeassistant)
+
 ## Show the RTI (real time info) expected arrival time of the next bus
 
 ![RTI](img/rti.png)
