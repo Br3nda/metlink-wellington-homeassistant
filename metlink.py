@@ -2,6 +2,7 @@
 Support for Metlink's public transport.
 Bus, Train, Ferry. Great Wellington / Whanganui a Tara.
 """
+
 import logging
 from datetime import timedelta, datetime
 
