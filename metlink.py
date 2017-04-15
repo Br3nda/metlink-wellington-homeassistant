@@ -1,7 +1,7 @@
-
-
-
-
+"""
+Support for Metlink's public transport.
+Bus, Train, Ferry. Great Wellington / Whanganui a Tara.
+"""
 
 import logging
 from datetime import timedelta, datetime
@@ -11,16 +11,14 @@ import voluptuous as vol
 
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.const import CONF_NAME, ATTR_ATTRIBUTION
-import homeassistant.util.dt as dt_util
 from homeassistant.helpers.entity import Entity
-from homeassistant.util import Throttle
 import homeassistant.helpers.config_validation as cv
 
 _LOGGER = logging.getLogger(__name__)
 
 CONF_ATTRIBUTION = "Data provided by metlink.org.nz"
 ICON = 'mdi:bus'
-MIN_TIME_BETWEEN_UPDATES = timedelta(seconds=60)
+STOP_URL = "https://www.metlink.org.nz/api/v1/StopDepartures/{stop_number}"
 
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
@@ -87,7 +85,6 @@ class MetlinkSensor(Entity):
         elif service and service.display_departure:
             return pretty_timestamp(service.display_departure)
 
-
     @property
     def device_state_attributes(self):
         """Return the state attributes."""
@@ -97,7 +94,7 @@ class MetlinkSensor(Entity):
             'StopName': self.metlink_stop.stop_name,
             'Latitude': self.metlink_stop.latitude,
             'Longitude': self.metlink_stop.longitude
-            }
+        }
 
         if self.next_service:
             attributes.update(self.next_service.attributes())
@@ -123,8 +120,7 @@ class MetlinkSensor(Entity):
 
     def update(self):
         """Get the latest data from Metlink and update the states."""
-        url = "https://www.metlink.org.nz/api/v1/StopDepartures/{stop_number}".format(
-            stop_number=self.stop_number)
+        url = STOP_URL.format(stop_number=self.stop_number)
         r = requests.get(url)
         self.metlink_stop = MetlinkStop(r.json())
 
@@ -138,7 +134,7 @@ class MetlinkStop(object):
     def services(self, route_number=None):
         for data in self._data.get('Services'):
             service = MetlinkService(data)
-            if not route_number or (route_number and str(route_number) == str(service.route_number)):
+            if str(route_number) == str(service.route_number):
                 yield service
 
     @property
@@ -154,13 +150,15 @@ class MetlinkStop(object):
         return self._data.get('Stop', {}).get('Lat')
 
     def next_service(self, route_number=None):
-        """The next service expected to arrive here, optionally filtered by route_number """
+        """The next service expected to arrive here,
+        optionally filtered by route_number"""
         for service in self.services(route_number=route_number):
             return service
 
 
 class MetlinkService(object):
-    """ A single service, e.g. Bus on route 1, from bus stop 1000, traveling the whole route """
+    """A single service, e.g. Bus on route 1, from bus stop 1000,
+    traveling the whole route """
 
     def __init__(self, service_data):
         self._service_data = service_data
@@ -199,7 +197,6 @@ class MetlinkService(object):
         if value:
             return pretty_timestamp(value)
         return value
-
 
     def attributes(self):
         return {
